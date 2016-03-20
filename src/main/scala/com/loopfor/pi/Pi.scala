@@ -20,11 +20,11 @@ object Pi {
     val (width, height) = try {
       gr.setFont(font)
       val metrics = gr.getFontMetrics
-      (metrics.stringWidth("0" * Cols), metrics.getHeight)
+      (metrics.stringWidth("0" * Cols), metrics.getHeight * Rows)
     } finally
       gr.dispose()
 
-    val image = new BufferedImage(width, height * Rows, BufferedImage.TYPE_INT_ARGB)
+    val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
 
     // Render all digits.
     gr = image.createGraphics()
@@ -44,13 +44,13 @@ object Pi {
     }
 
     // Render the Pi symbol overlay.
-    gr.setFont(new Font("Symbol", Font.PLAIN, 4000))
+    gr.setFont(new Font("Symbol", Font.PLAIN, 6000))
     gr.setColor(Color.BLUE)
-    gr.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.75F))
+    gr.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.8F))
     val bounds = gr.getFontMetrics.getStringBounds(Watermark, gr)
     val x = (width - bounds.getWidth) / 2
-    val y = (Rows * height) / 2
-    gr.drawString(Watermark, x.toInt, y)
+    val y = -bounds.getY - (height - bounds.getHeight) / 2
+    gr.drawString(Watermark, x.toInt, y.toInt)
     gr.dispose()
 
     ImageIO.write(image, "PNG", new File("pi-poster.png"))
